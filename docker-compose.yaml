@@ -1,0 +1,47 @@
+version: '3'
+x-airflow-common:
+  &airflow-common
+  image: apache/airflow:2.10.2-python3.12
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./airflow-data/logs:/opt/airflow/logs
+    - ./airflow-data/plugins:/opt/airflow/plugins
+    - ./airflow-data/airflow.cfg:/opt/airlfow/airflow.cfg
+  depends_on:
+    - postgres
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_PASSWORD: "postgres"
+        POSTGRES_MULTIPLE_DATABASES: airflow, wowguildexport
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./database/multiple-databases.sh:/docker-entrypoint-initdb.d/multiple-databases.sh
+
+  airflow-webserver:
+    << : *airflow-common
+    command: airflow webserver
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    container_name: airflow_webserver
+    restart: always
+
+  airflow-scheduler:
+    << : *airflow-common
+    command: airflow scheduler
+    container_name: airflow_scheduler
+    env_file:
+      - .env
+    restart: always
