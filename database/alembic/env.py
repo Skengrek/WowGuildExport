@@ -15,7 +15,13 @@ dotenv.load_dotenv()
 # access to the values within the .ini file in use.
 config = context.config
 
-database_url = f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}@localhost:5432/wowguildexport"
+database_url = "postgresql://{}:{}@{}:{}/{}".format(
+    os.environ.get('POSTGRES_USER'),
+    os.environ.get('POSTGRES_PASSWORD'),
+    os.environ.get('POSTGRES_HOST'),
+    os.environ.get('POSTGRES_PORT'),
+    os.environ.get('POSTGRES_DB'),
+    )
 
 config.set_main_option("sqlalchemy.url", database_url)
 

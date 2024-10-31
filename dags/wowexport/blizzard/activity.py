@@ -2,7 +2,7 @@ from pandas import DataFrame
 from logging import getLogger
 from datetime import datetime
 from sqlalchemy.orm import Session
-from wowexport.utils import get_database_engine
+from .utils import get_database_engine
 from airflow.decorators import task, task_group
 from sqlalchemy import Table, MetaData, engine, select, func
 logger = getLogger(__name__)

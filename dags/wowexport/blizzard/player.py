@@ -120,7 +120,6 @@ def get_all_known_characters_from_db() -> list:
 @task
 def insert_new_char_to_database(character_list):
     already_known_char_id = get_all_known_characters_from_db()
-    logger.info(type(already_known_char_id[0]))
     character_to_add = []
     for p in character_list:
         if str(p["id"]) not in already_known_char_id:
